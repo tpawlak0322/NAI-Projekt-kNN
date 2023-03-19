@@ -25,7 +25,7 @@ public class AlgorithmKNN {
     }
 
     private double checkDistance(double[] Values, double[] sourceValues){
-        int Pow2Sum = 0;
+        double Pow2Sum = 0;
         for(int i = 0; i < Values.length; i++){
             Pow2Sum += Math.pow(Values[i]-sourceValues[i], 2);
         }

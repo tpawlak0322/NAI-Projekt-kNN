@@ -6,20 +6,64 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
-    private static final int k = 4;
+    private static int k = 4;
+    private static final String pathToTrainData = "C:\\Users\\tpawl\\Documents\\iris.data";
+    private static final int DecisionParamaterIndex = 4;
+    private static final String pathToTestData = "C:\\Users\\tpawl\\Documents\\iris.test.data";
     public static void main(String[] args) {
 
         ArrayList<MLVector> objects_data_train = new ArrayList<>();
-        objects_data_train = parseCsvToArray("/Users/tomaszpawlak/Documents/wdbc.data",1,",");
-        ArrayList<MLVector> objects_data_test = new ArrayList<>();
-        objects_data_test = parseCsvToArray("/Users/tomaszpawlak/Documents/wdbctest.data",1,",");
+        objects_data_train = parseCsvToArray(pathToTrainData,DecisionParamaterIndex,",");
+
 
         AlgorithmKNN algorithmKNN = new AlgorithmKNN(objects_data_train);
-//        for(MLVector vec : objects_data_test) {
-//            System.out.println("For vec: " + vec + " and K = " + k);
-//            String[] result = algorithmKNN.returnSmallestDistance(k, vec);
-//            Arrays.stream(result).forEach(System.out::println);
-//        }
+        while(true) {
+            System.out.println("1. Uruchom algorytm na danych testowych");
+            System.out.println("2. Uruchom algorytm na podanym przez siebie wektorze");
+            System.out.println("3. Wprowadz nowe K");
+            System.out.println("4. Exit");
+            String input = new Scanner(System.in).nextLine();
+            switch (input) {
+                case "1":
+                    checkAccuracyForTrainData(algorithmKNN);
+                    break;
+                case "2":
+                    checkVectorManully(algorithmKNN);
+                    break;
+                case "3":
+                    System.out.println("Wprowadz nowe K");
+                    k = Integer.parseInt(new Scanner(System.in).nextLine());
+                    break;
+                case "4":
+                    return;
+                default:
+                    System.out.println("Uknown operation");
+            }
+        }
+    }
+    private static void checkAccuracyForTrainData(AlgorithmKNN algorithmKNN){
+        ArrayList<MLVector> objects_data_test = new ArrayList<>();
+        objects_data_test = parseCsvToArray(pathToTestData,DecisionParamaterIndex,",");
+        int numberOfIterations = 0;
+        int correct = 0;
+        for(MLVector vec : objects_data_test) {
+            System.out.println("For vec: " + vec + " and K = " + k);
+            String wantedResult = vec.Name;
+            String[] result = algorithmKNN.returnSmallestDistance(k, vec);
+            for(String s : result)
+                if (s.equals(vec.Name))
+                    correct++;
+            Arrays.stream(result).forEach(System.out::println);
+            numberOfIterations++;
+        }
+        double accuracy = (double) (correct) / (numberOfIterations * k);
+       accuracy *= 10000;
+       accuracy =Math.round(accuracy) / 100;
+
+        System.out.println("ACCURACY: " + accuracy + "%");
+    }
+    private static void checkVectorManully(AlgorithmKNN algorithmKNN){
+
         System.out.println("Podaj atrybuty");
         String input = new Scanner(System.in).nextLine();
         String[] splittedInput = input.split(",");
@@ -27,6 +71,7 @@ public class Main {
         System.out.println("Provided vector: " + inputMLVector);
         String[] result = algorithmKNN.returnSmallestDistance(k, inputMLVector);
         Arrays.stream(result).forEach(System.out::println);
+
     }
     public static  MLVector parseStringToMLVector(String[] text,int DecisionParamaterIndex){
         double[] attributes = new double[text.length - 1]; // -1 ponieważ wczytuje atrybut decyzyjny
