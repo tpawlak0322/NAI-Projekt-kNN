@@ -8,7 +8,7 @@ import java.util.Scanner;
 public class Main {
     private static int k = 4;
     private static final String pathToTrainData = "C:\\Users\\tpawl\\Documents\\iris.data";
-    private static final int DecisionParamaterIndex = 4;
+    private static final int DecisionParamaterIndex = 4; //4 - iris, 30 - wdbc
     private static final String pathToTestData = "C:\\Users\\tpawl\\Documents\\iris.test.data";
     public static void main(String[] args) {
 
