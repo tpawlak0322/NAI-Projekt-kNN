@@ -3,13 +3,14 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class Main {
     private static int k = 4;
-    private static final String pathToTrainData = "C:\\Users\\tpawl\\Documents\\iris.data";
-    private static final int DecisionParamaterIndex = 4; //4 - iris, 30 - wdbc
-    private static final String pathToTestData = "C:\\Users\\tpawl\\Documents\\iris.test.data";
+    private static final String pathToTrainData = "C:\\Users\\tpawl\\Documents\\wdbc.data";
+    private static final int DecisionParamaterIndex = 30; //4 - iris, 30 - wdbc
+    private static final String pathToTestData = "C:\\Users\\tpawl\\Documents\\wdbc.test.data";
     public static void main(String[] args) {
 
         ArrayList<MLVector> objects_data_train = new ArrayList<>();
@@ -41,22 +42,41 @@ public class Main {
             }
         }
     }
+    public static String findMostFrequent(String[] array) {
+        HashMap<String, Integer> map = new HashMap<>();
+        int maxCount = 0;
+        String mostFrequentString = "";
+
+        for (String str : array) {
+            if (map.containsKey(str)) {
+                int count = map.get(str) + 1;
+                map.put(str, count);
+                if (count > maxCount) {
+                    maxCount = count;
+                    mostFrequentString = str;
+                }
+            } else {
+                map.put(str, 1);
+            }
+        }
+
+        return mostFrequentString;
+    }
     private static void checkAccuracyForTrainData(AlgorithmKNN algorithmKNN){
         ArrayList<MLVector> objects_data_test = new ArrayList<>();
         objects_data_test = parseCsvToArray(pathToTestData,DecisionParamaterIndex,",");
-        int numberOfIterations = 0;
+        int numberOfIterations = objects_data_test.size();
         int correct = 0;
         for(MLVector vec : objects_data_test) {
             System.out.println("For vec: " + vec + " and K = " + k);
             String wantedResult = vec.Name;
             String[] result = algorithmKNN.returnSmallestDistance(k, vec);
-            for(String s : result)
-                if (s.equals(vec.Name))
-                    correct++;
-            Arrays.stream(result).forEach(System.out::println);
-            numberOfIterations++;
+            String wynik = findMostFrequent(result);
+            if(wynik.equals(wantedResult))
+                correct++;
+            System.out.println("Wynik " + wynik);
         }
-        double accuracy = (double) (correct) / (numberOfIterations * k);
+        double accuracy = (double) (correct) / (numberOfIterations);
        accuracy *= 10000;
        accuracy =Math.round(accuracy) / 100;
 
